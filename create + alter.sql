@@ -146,3 +146,10 @@ ALTER COLUMN itemName TYPE VARCHAR(255);
 
 ALTER TABLE Items.LuggageItemType
 ADD CONSTRAINT length_check CHECK (length(itemname) > 0);
+
+
+CREATE TABLE papers.audit_log (
+    id SERIAL PRIMARY KEY,
+    event_time TIMESTAMP NOT NULL DEFAULT now(),
+    description TEXT NOT NULL
+);

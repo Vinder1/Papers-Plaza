@@ -10,4 +10,4 @@
 ---
 
 ### Скриншот структуры таблиц в СУБД 
-![полученная в СУБД ER-модель таможенного контроля](pictures/ER-database-diagram.png)
+<img width="2289" height="1057" alt="Untitled" src="https://github.com/user-attachments/assets/5d5649ed-c267-4fbf-926e-2c95bd6b495c" />
