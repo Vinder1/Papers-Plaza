@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: PapersPlease
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - papers_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "9000:80"
+    depends_on:
+      - postgres
+    networks:
+      - papers_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+  flyway:
+    image: flyway/flyway:10.17.0
+    container_name: flyway
+    command: migrate
+    volumes:
+      - ./migrations:/flyway/sql
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/PapersPlease
+      FLYWAY_USER: postgres
+      FLYWAY_PASSWORD: ${DB_PASSWORD}
+      # Опционально: игнорировать будущие миграции (если нужно)
+      # FLYWAY_IGNORE_MIGRATION_PATTERNS: ""
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - papers_network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+
+networks:
+  papers_network:
+    driver: bridge
