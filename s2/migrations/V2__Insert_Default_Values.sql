@@ -1,3 +1,5 @@
+-- Так делать нельзя, но да ладно
+
 INSERT INTO identity.country (name)
 VALUES ('Россия'),
     ('США'),

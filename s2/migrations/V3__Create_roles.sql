@@ -10,9 +10,9 @@ BEGIN
             CREATEDB
             CREATEROLE
             REPLICATION
-            CONNECTION LIMIT 2;
+            CONNECTION LIMIT 3;
     ELSE
-        ALTER ROLE admin WITH PASSWORD 'nimda';
+        ALTER ROLE admin WITH PASSWORD 'nimda' CONNECTION LIMIT 3;
     END IF;
 
     IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = 'app') THEN
@@ -33,7 +33,7 @@ BEGIN
         -- Readonly: только чтение
         CREATE ROLE readonly WITH
             LOGIN
-            PASSWORD ''
+            PASSWORD 'readonly'
             NOSUPERUSER
             NOCREATEDB
             NOCREATEROLE
@@ -53,27 +53,27 @@ GRANT CONNECT ON DATABASE "PapersPlease" TO readonly;
 REVOKE CONNECT ON DATABASE "PapersPlease" FROM PUBLIC;
 
 -- Права на использование
-GRANT ALL ON SCHEMA criminal, identity, items, papers, people, public TO admin;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people, public TO admin;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA criminal, identity, items, papers, people, public TO admin;
+GRANT ALL ON SCHEMA criminal, identity, items, papers, people TO admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people TO admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA criminal, identity, items, papers, people TO admin;
 
-GRANT USAGE ON SCHEMA criminal, identity, items, papers, people, public TO app;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people, public TO app;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA criminal, identity, items, papers, people, public TO app;
+GRANT USAGE ON SCHEMA criminal, identity, items, papers, people TO app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people TO app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA criminal, identity, items, papers, people TO app;
 
-GRANT USAGE ON SCHEMA criminal, identity, items, papers, people, public TO readonly;
-GRANT SELECT ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people, public TO readonly;
+GRANT USAGE ON SCHEMA criminal, identity, items, papers, people TO readonly;
+GRANT SELECT ON ALL TABLES IN SCHEMA criminal, identity, items, papers, people TO readonly;
 
 -- Права по умолчанию
-ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people, public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people 
     GRANT ALL ON TABLES TO admin;
-ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people, public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people 
     GRANT ALL ON SEQUENCES TO admin;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people, public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people 
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO app;
-ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people, public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people 
     GRANT USAGE, SELECT ON SEQUENCES TO app;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people, public 
+ALTER DEFAULT PRIVILEGES IN SCHEMA criminal, identity, items, papers, people 
     GRANT SELECT ON TABLES TO readonly;
