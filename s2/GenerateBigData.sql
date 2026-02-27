@@ -111,7 +111,7 @@ BEGIN
     -- TRUNCATE TABLE Criminal.Record;
     SELECT ARRAY_AGG(id) INTO crime_ids FROM Criminal.Case;
     
-    WHILE i < 300000 LOOP
+    WHILE i < 100000 LOOP
         v_attempts := 0;
         
         LOOP
