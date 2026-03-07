@@ -191,10 +191,11 @@ SELECT
     NOW() + (
         RANDOM() * INTERVAL '1825 days'
     ),
-    CASE
-        WHEN RANDOM() < 0.1 THEN NULL
-        ELSE (RANDOM() * 10000 + 1)::INT
-    END, -- 10% NULL
+    -- CASE
+    --     WHEN RANDOM() < 0.1 THEN NULL
+    --     ELSE (RANDOM() * 10000 + 1)::INT
+    -- END, -- 10% NULL
+    1,
     (RANDOM() * 4 + 1)::INT,
     -- JSONB с разной структурой
     CASE
@@ -333,7 +334,7 @@ SELECT
         ELSE 'Event_' || i || '_User_' || (RANDOM() * 1000000)::INT || '_Action_' || md5(i::TEXT)
     END,
     to_tsvector(
-        'russian',
+        'english',
         'Event_' || i || '_User_' || (RANDOM() * 1000000)::INT
     )
 FROM generate_series(1, 300000) AS i;
