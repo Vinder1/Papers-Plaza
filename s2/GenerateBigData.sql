@@ -338,3 +338,20 @@ SELECT
         'Event_' || i || '_User_' || (RANDOM() * 1000000)::INT
     )
 FROM generate_series(1, 300000) AS i;
+
+
+INSERT INTO papers.workPermission (
+    issueDate,
+    validUntil,
+    fullName,
+    countryOfIssue,
+    activityId
+)
+SELECT
+    NOW()::DATE - (RANDOM() * 730)::INT,
+    NOW()::DATE + (RANDOM() * 365)::INT,
+    'Person_' || i || '_' || md5(i::TEXT),
+    (RANDOM() * 4 + 1)::INT,
+    (RANDOM() * 2 + 1)::INT
+    
+FROM generate_series(1, 1000) AS i;
