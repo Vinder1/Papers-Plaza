@@ -1,0 +1,9 @@
+docker-compose up -d
+
+# перед следующей командой один раз:
+chmod +x setup-replication.sh
+
+# в Git Bash, ибо в консоли не работает
+./setup-replication.sh
+
+docker-compose restart pg-replica1 pg-replica2
