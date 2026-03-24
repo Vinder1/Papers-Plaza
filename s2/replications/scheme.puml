@@ -1,0 +1,52 @@
+@startuml PostgreSQL_Streaming_Replication
+
+skinparam componentStyle rectangle
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+
+package "Docker Compose Network" {
+    
+    component "PostgreSQL Master\n(Docker Container)\nPort: 5432" as Master {
+        note right of Master : Write Operations\nWAL Generation
+    }
+    
+    component "PostgreSQL Replica 1\n(Docker Container)\nPort: 5433" as Replica1 {
+        note right of Replica1 : Read Only\nWAL Replay
+    }
+    
+    component "PostgreSQL Replica 2\n(Docker Container)\nPort: 5434" as Replica2 {
+        note right of Replica2 : Read Only\nWAL Replay
+    }
+}
+
+component "Client Applications" as Clients
+
+Clients --> Master : Write Queries
+Clients --> Replica1 : Read Queries
+Clients --> Replica2 : Read Queries
+
+Master --> Replica1 : Streaming Replication\n(WAL via TCP)
+Master --> Replica2 : Streaming Replication\n(WAL via TCP)
+
+note bottom of Master
+  <b>Master Configuration</b>
+  wal_level = replica
+  max_wal_senders = 10
+  wal_keep_size = 1GB
+end note
+
+note bottom of Replica1
+  <b>Replica Configuration</b>
+  hot_standby = on
+  primary_conninfo set
+  standby.signal present
+end note
+
+note bottom of Replica2
+  <b>Replica Configuration</b>
+  hot_standby = on
+  primary_conninfo set
+  standby.signal present
+end note
+
+@enduml
