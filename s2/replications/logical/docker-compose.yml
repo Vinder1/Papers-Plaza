@@ -1,0 +1,55 @@
+services:
+  postgres-publisher:
+    image: postgres:17
+    container_name: pg-publisher
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pubdb
+    ports:
+      - "5440:5432"
+    volumes:
+      - pg_publisher:/var/lib/postgresql/data
+      - ./init-publisher.sql:/docker-entrypoint-initdb.d/init.sql
+    command: >
+      postgres 
+      -c wal_level=logical
+      -c max_replication_slots=10
+      -c max_wal_senders=10
+      -c listen_addresses=*
+    networks:
+      - pg-logical-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres-subscriber:
+    image: postgres:17
+    container_name: pg-subscriber
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: subdb
+    ports:
+      - "5441:5432"
+    volumes:
+      - pg_subscriber:/var/lib/postgresql/data
+    command: >
+      postgres 
+      -c wal_level=logical
+      -c listen_addresses=*
+    networks:
+      - pg-logical-network
+    depends_on:
+      postgres-publisher:
+        condition: service_healthy
+
+networks:
+  pg-logical-network:
+    driver: bridge
+
+volumes:
+  pg_publisher:
+  pg_subscriber:

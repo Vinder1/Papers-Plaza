@@ -1,0 +1,34 @@
+# 1. Экспорт схемы с Publisher
+docker exec pg-publisher pg_dump -U postgres -d pubdb --schema-only -f /tmp/schema.sql
+
+# 2. Копирование дампа на хост
+docker cp pg-publisher:/tmp/schema.sql ./schema.sql
+
+# 3. Применение на Subscriber
+docker cp ./schema.sql pg-subscriber:/tmp/schema.sql
+docker exec pg-subscriber psql -U postgres -d subdb -f /tmp/schema.sql
+
+# 4. Или одной командой
+docker exec pg-publisher pg_dump -U postgres -d pubdb --schema-only | \
+  docker exec -i pg-subscriber psql -U postgres -d subdb
+
+
+
+# Экспорт данных конкретных таблиц
+docker exec pg-publisher pg_dump -U postgres -d pubdb \
+  --table=users --table=logs \
+  --data-only -f /tmp/data.sql
+
+# Импорт на Subscriber
+docker exec -i pg-subscriber psql -U postgres -d subdb < ./data.sql
+
+
+
+# Дамп с позицией WAL (для точного восстановления)
+docker exec pg-publisher pg_dump -U postgres -d pubdb \
+  --verbose --file=/tmp/backup.sql
+
+--verbose - Подробный вывод, чтобы видеть прогресс и ошибки
+
+# Восстановление
+docker exec -i pg-subscriber psql -U postgres -d subdb < /tmp/backup.sql

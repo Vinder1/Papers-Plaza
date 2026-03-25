@@ -1,0 +1,24 @@
+@startuml Logical_Replication
+
+package "Docker Network" {
+    component "PostgreSQL Publisher\n(Port: 5432)" as Publisher
+    component "PostgreSQL Subscriber\n(Port: 5433)" as Subscriber
+}
+
+Publisher --> Subscriber : Logical Replication\n(WAL → Changes)
+
+note right of Publisher
+  <b>Publication</b>
+  - Таблицы для репликации
+  - INSERT/UPDATE/DELETE
+  - DDL НЕ реплицируется
+end note
+
+note right of Subscriber
+  <b>Subscription</b>
+  - Подписка на publication
+  - Автоматическое применение
+  - Схема должна совпадать
+end note
+
+@enduml
