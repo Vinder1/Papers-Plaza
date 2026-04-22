@@ -1,0 +1,17 @@
+services:
+  redis:
+    image: valkey/valkey:latest
+    container_name: redis-hw
+    ports:
+      - "6379:6379"
+    volumes:
+      - valkey:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  valkey:
