@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS business_audit (
+    id BIGSERIAL PRIMARY KEY,
+    event_time TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    event_type TEXT NOT NULL
+);
