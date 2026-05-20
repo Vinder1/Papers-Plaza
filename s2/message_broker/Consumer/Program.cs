@@ -1,8 +1,7 @@
 ﻿using Npgsql;
-using System.Text.Json;
 
 var connString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") 
-    ?? "Host=localhost;Database=queue_db;Username=postgres;Password=postgres";
+    ?? "Host=localhost;Port=5444;Database=broker_db;Username=postgres;Password=postgres";
 var workerId = $"worker-{Guid.NewGuid().ToString()[..8]}";
 
 using var dataSource = NpgsqlDataSource.Create(connString);
