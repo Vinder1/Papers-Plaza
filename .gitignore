@@ -1,3 +1,5 @@
 .vscode/settings.json
 sandbox.sql
 .env
+**/bin/
+**/obj/
